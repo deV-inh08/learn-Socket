@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h1>Chat app</h1>
+    <input type="text" placeholder="Enter name" id="ip_username">
+    <br>
+    <br>
+    <input type="text" placeholder="Enter room" id="ip_room">
+    <br>
+    <br>
+    <button id="btn_send_room">Send</button>
+    <br>
+    <br>
+    <input type="text" name="" id="ip_message">
+    <button id="btn_send_message">Send message</button>
+    <ul id="thread">
+    </ul>
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        let socket = io.connect('localhost:3000')
+        const thread = document.getElementById('thread')
+        const ip_username = document.getElementById('ip_username')
+        const ip_room = document.getElementById('ip_room')
+        const btn_send_room = document.getElementById('btn_send_room');
+        const ip_message =document.getElementById('ip_message');
+        const btn_send_message = document.getElementById('btn_send_message')
+
+        // click send room 
+        btn_send_room.addEventListener('click', () => {
+            socket.emit('join', {room: ip_room.value, name: ip_username.value })
+        })
+
+        btn_send_message.addEventListener('click', () => {
+            socket.emit('message', `${ip_username.value}: ${ip_message.value}`)
+            ip_message.reset()
+        })
+
+        socket.on('thread', (data) => {
+            let li = document.createElement('li')
+            li.innerHTML = data
+            thread.appendChild(li);
+        })
+
+    </script>
+</body>
+</html>
